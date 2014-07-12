@@ -20,5 +20,8 @@
 		Schedule emails to yourself at <%=currentUser.getEmail()%> to be received in
 		the future. <a href="<%=logoutURL%>">Log out</a> to use a different account.
 	</p>
+	<form action="/futureself" method="post">
+		<input type="submit" value="Schedule message" />
+	</form>
 </body>
 </html>

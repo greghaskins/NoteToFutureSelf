@@ -3,8 +3,6 @@ package sending;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import javax.mail.internet.InternetAddress;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +13,7 @@ import com.google.appengine.tools.development.testing.LocalMailServiceTestConfig
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.greghaskins.futureself.email.EmailSender;
 import com.greghaskins.futureself.email.EmailSender.Body;
+import com.greghaskins.futureself.email.EmailSender.Recipient;
 import com.greghaskins.futureself.email.EmailSender.Subject;
 
 public class WhenDeliveringAnEmail {
@@ -42,7 +41,7 @@ public class WhenDeliveringAnEmail {
 		this.serviceTestHelper.tearDown();
 	}
 
-	private MailMessage sendMessage(final InternetAddress recipient, final Subject subject,
+	private MailMessage sendMessage(final Recipient recipient, final Subject subject,
 			final Body body) {
 		final EmailSender emailSender = new EmailSender();
 		emailSender.sendMessage(recipient, subject, body);
@@ -53,7 +52,7 @@ public class WhenDeliveringAnEmail {
 	public void itGoesToTheCorrectRecipientAddress() throws Exception {
 		final String expectedEmailAddress = "myself@example.com";
 
-		final MailMessage mailMessage = sendMessage(new InternetAddress(expectedEmailAddress),
+		final MailMessage mailMessage = sendMessage(new Recipient(expectedEmailAddress),
 				new EmailSender.Subject(""), new Body(""));
 
 		assertThat(mailMessage.getTo(0), is(expectedEmailAddress));
@@ -63,7 +62,7 @@ public class WhenDeliveringAnEmail {
 	public void itHasTheCorrectSubjectLine() throws Exception {
 		final String expectedSubject = "An important topic";
 
-		final MailMessage mailMessage = sendMessage(new InternetAddress("some@example.com"),
+		final MailMessage mailMessage = sendMessage(new Recipient("some@example.com"),
 				new Subject(expectedSubject), new Body(""));
 
 		assertThat(mailMessage.getSubject(), is(expectedSubject));
@@ -73,7 +72,7 @@ public class WhenDeliveringAnEmail {
 	public void itHasTheCorrectBodyText() throws Exception {
 		final String expectedBodyText = "The meat of the matter";
 
-		final MailMessage mailMessage = sendMessage(new InternetAddress("some@example.com"),
+		final MailMessage mailMessage = sendMessage(new Recipient("some@example.com"),
 				new Subject(""), new Body(expectedBodyText));
 
 		assertThat(mailMessage.getTextBody(), is(expectedBodyText));

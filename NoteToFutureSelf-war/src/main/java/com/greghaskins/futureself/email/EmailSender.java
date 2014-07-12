@@ -10,7 +10,7 @@ import javax.mail.internet.MimeMessage;
 
 public class EmailSender {
 
-	public void sendMessage(final InternetAddress recipient, final Subject subject, final Body body) {
+	public void sendMessage(final Recipient recipient, final Subject subject, final Body body) {
 		try {
 			final MimeMessage message = createMessage(recipient, subject, body);
 			sendMessage(message);
@@ -20,10 +20,11 @@ public class EmailSender {
 		}
 	}
 
-	private static MimeMessage createMessage(final InternetAddress recipient,
-			final Subject subject, final Body body) throws MessagingException {
+	private static MimeMessage createMessage(final Recipient recipient, final Subject subject,
+			final Body body) throws MessagingException {
 		final MimeMessage message = createBlankMessage();
-		message.addRecipient(javax.mail.Message.RecipientType.TO, recipient);
+		final InternetAddress internetAddress = new InternetAddress(recipient.emailAddress);
+		message.addRecipient(javax.mail.Message.RecipientType.TO, internetAddress);
 		message.setSubject(subject.text);
 		message.setText(body.text);
 		return message;
@@ -37,6 +38,16 @@ public class EmailSender {
 
 	private static void sendMessage(final MimeMessage message) throws MessagingException {
 		Transport.send(message);
+	}
+
+	public static class Recipient {
+
+		private final String emailAddress;
+
+		public Recipient(final String emailAddress) {
+			this.emailAddress = emailAddress;
+		}
+
 	}
 
 	public static class Subject {
