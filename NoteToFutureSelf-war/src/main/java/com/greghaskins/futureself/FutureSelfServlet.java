@@ -1,6 +1,8 @@
 package com.greghaskins.futureself;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +15,7 @@ import com.greghaskins.futureself.email.EmailSender;
 import com.greghaskins.futureself.email.EmailSender.Body;
 import com.greghaskins.futureself.email.EmailSender.Recipient;
 import com.greghaskins.futureself.email.EmailSender.Subject;
+import com.greghaskins.futureself.email.EmailSendingException;
 
 public class FutureSelfServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -22,12 +25,18 @@ public class FutureSelfServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		final User currentUser = UserServiceFactory.getUserService().getCurrentUser();
-		sendEmailDirectly(currentUser.getEmail());
+		try {
+			sendEmailDirectly(currentUser.getEmail());
+			resp.getWriter().println("Sent.");
+		} catch (final EmailSendingException e) {
+			resp.getWriter().println("Failed.");
+			Logger.getLogger(getServletName()).log(Level.SEVERE,
+					"Failed to send email to " + currentUser.getEmail(), e);
+		}
 
-		resp.getWriter().println("Sent.");
 	}
 
-	protected void sendEmailDirectly(final String emailAddress) {
+	protected void sendEmailDirectly(final String emailAddress) throws EmailSendingException {
 		new EmailSender().sendMessage(new Recipient(emailAddress), new Subject(
 				"Test note to future self"), new Body(
 				"This is a test message. If you're reading this, it worked."));

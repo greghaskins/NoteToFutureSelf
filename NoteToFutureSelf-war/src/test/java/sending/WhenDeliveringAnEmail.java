@@ -15,10 +15,11 @@ import com.greghaskins.futureself.email.EmailSender;
 import com.greghaskins.futureself.email.EmailSender.Body;
 import com.greghaskins.futureself.email.EmailSender.Recipient;
 import com.greghaskins.futureself.email.EmailSender.Subject;
+import com.greghaskins.futureself.email.EmailSendingException;
 
 public class WhenDeliveringAnEmail {
 
-	// TODO What should happen when it fails?
+	// TODO Validation?
 
 	private LocalServiceTestHelper serviceTestHelper;
 	private LocalMailService mailService;
@@ -42,7 +43,7 @@ public class WhenDeliveringAnEmail {
 	}
 
 	private MailMessage sendMessage(final Recipient recipient, final Subject subject,
-			final Body body) {
+			final Body body) throws Exception {
 		final EmailSender emailSender = new EmailSender();
 		emailSender.sendMessage(recipient, subject, body);
 		return this.mailService.getSentMessages().get(0);
@@ -62,8 +63,8 @@ public class WhenDeliveringAnEmail {
 	public void itHasTheCorrectSubjectLine() throws Exception {
 		final String expectedSubject = "An important topic";
 
-		final MailMessage mailMessage = sendMessage(new Recipient("some@example.com"),
-				new Subject(expectedSubject), new Body(""));
+		final MailMessage mailMessage = sendMessage(new Recipient("some@example.com"), new Subject(
+				expectedSubject), new Body(""));
 
 		assertThat(mailMessage.getSubject(), is(expectedSubject));
 	}
@@ -72,10 +73,15 @@ public class WhenDeliveringAnEmail {
 	public void itHasTheCorrectBodyText() throws Exception {
 		final String expectedBodyText = "The meat of the matter";
 
-		final MailMessage mailMessage = sendMessage(new Recipient("some@example.com"),
-				new Subject(""), new Body(expectedBodyText));
+		final MailMessage mailMessage = sendMessage(new Recipient("some@example.com"), new Subject(
+				""), new Body(expectedBodyText));
 
 		assertThat(mailMessage.getTextBody(), is(expectedBodyText));
+	}
+
+	@Test(expected = EmailSendingException.class)
+	public void itThrowsAnEmailSendingExceptionIfTheAddressIsBogus() throws Exception {
+		sendMessage(new Recipient(",&51"), new Subject("something"), new Body("something"));
 	}
 
 }

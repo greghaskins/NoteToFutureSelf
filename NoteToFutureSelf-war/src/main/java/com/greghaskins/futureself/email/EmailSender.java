@@ -10,13 +10,13 @@ import javax.mail.internet.MimeMessage;
 
 public class EmailSender {
 
-	public void sendMessage(final Recipient recipient, final Subject subject, final Body body) {
+	public void sendMessage(final Recipient recipient, final Subject subject, final Body body)
+			throws EmailSendingException {
 		try {
 			final MimeMessage message = createMessage(recipient, subject, body);
 			sendMessage(message);
 		} catch (final MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new EmailSendingException(e);
 		}
 	}
 
