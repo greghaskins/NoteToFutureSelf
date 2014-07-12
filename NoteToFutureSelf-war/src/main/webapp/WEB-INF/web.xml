@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
    <servlet>
-      <servlet-name>guestbook</servlet-name>
-      <servlet-class>com.google.appengine.demos.guestbook.GuestbookServlet</servlet-class>
+      <servlet-name>futureself</servlet-name>
+      <servlet-class>com.greghaskins.futureself.FutureSelfServlet</servlet-class>
    </servlet>
    <servlet-mapping>
-      <servlet-name>guestbook</servlet-name>
-      <url-pattern>/guestbook</url-pattern>
+      <servlet-name>futureself</servlet-name>
+      <url-pattern>/futureself</url-pattern>
    </servlet-mapping>
    <welcome-file-list>
-      <welcome-file>guestbook.jsp</welcome-file>
+      <welcome-file>index.jsp</welcome-file>
    </welcome-file-list>
+
+   <security-constraint>
+      <web-resource-collection>
+         <web-resource-name>app</web-resource-name>
+         <url-pattern>/*</url-pattern>
+      </web-resource-collection>
+      <auth-constraint>
+         <role-name>*</role-name>
+      </auth-constraint>
+   </security-constraint>
+
 </web-app>
